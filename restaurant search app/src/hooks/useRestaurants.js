@@ -11,7 +11,7 @@ export default () => {
         params: {
           limit: 50,
           term: searchTerm,
-          location: 'Dunfermline'
+          location: 'San Jose'
         }
       });
       setRestaurants(response.data.businesses);
@@ -21,7 +21,7 @@ export default () => {
   };
 
   useEffect(() => {
-    searchApi('Chips')
+    searchApi('Pasta')
   }, [])
 
   return[searchApi, restaurants, errorMessage];
