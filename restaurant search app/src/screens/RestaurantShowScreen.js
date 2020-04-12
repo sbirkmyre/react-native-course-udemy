@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
 import yelp from '../api/yelp';
+import useRestaurant from '../hooks/useRestaurant';
 
 const RestaurantShowScreen = ({ navigation }) => {
-  const [restaurant, setRestaurant] = useState(null);
   const id = navigation.getParam('id');
-
-  const getRestaurant = async id => {
-    const response = await yelp.get(`/${id}`);
-    setRestaurant(response.data);
-  };
+  const [getRestaurant, restaurant, errorMessage] = useRestaurant();
 
   useEffect(() => {
     getRestaurant(id);
@@ -21,9 +17,18 @@ const RestaurantShowScreen = ({ navigation }) => {
 
   return (
     <View>
-      <Text style={styles.name}>{restaurant.name}</Text>
+      <View style={styles.address}>
+        <Text style={styles.name}>{restaurant.name}</Text>
+        { restaurant.phone !== "" ? <Text>Phone: {restaurant.phone}</Text> : null }
+        { restaurant.location.address1 !== "" ? <Text>Street Address: {restaurant.location.address1}</Text> : null }
+        { restaurant.location.city !== "" ? <Text>City: {restaurant.location.city}</Text> : null }
+        { restaurant.location.country !== "" ? <Text>Country: {restaurant.location.country}</Text> : null }
+        { restaurant.location.state !== "" ? <Text>State: {restaurant.location.state}</Text> : null }
+        { restaurant.location.zip_code !== "" ? <Text>Zip Code: {restaurant.location.zip_code}</Text> : null }
+      </View>
       <FlatList
-        style={styles.list}
+        horizontal
+        showsHorizontalScrollIndicator={false}
         data={restaurant.photos}
         keyExtractor={(photo) => photo}
         renderItem={({ item }) => {
@@ -40,16 +45,18 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginLeft: 10,
     marginBottom: 5
   },
-  list: {
+  address: {
+    fontSize: 16,
+    marginBottom: 5,
     marginHorizontal: 10
   },
   image: {
     height:120,
     width: 250,
-    marginBottom: 10
+    marginBottom: 10,
+    marginHorizontal: 10
   }
 });
 
